@@ -19,6 +19,8 @@
 	<link href="{{ asset('assets/admin/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     {{-- <script src="js/sweetalert.min.js"></script> --}}
+
+    <script src="https://cdn.tiny.cloud/1/vbv648tcvjj964pg4cw6z4uewq92d4j2zjkxaa0bsvvz2yb8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 
 <body>
@@ -31,6 +33,11 @@
 
 		<div class="main">
             @include('layouts.admin.topbar')
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div>{{$error}}</div>
+                @endforeach
+            @endif
 
             <main class="content">
                 <div class="container-fluid p-0">
