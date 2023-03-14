@@ -191,13 +191,17 @@
 
         </div><!-- End blog posts list -->
 
-        <div class="blog-pagination">
+        <div class="d-flex justify-content-center mt-5">
+            {{ $datas->links() }}
+        </div>
+
+        {{-- <div class="blog-pagination">
             <ul class="justify-content-center">
             <li><a href="#">1</a></li>
             <li class="active"><a href="#">2</a></li>
             <li><a href="#">3</a></li>
             </ul>
-        </div><!-- End blog pagination -->
+        </div><!-- End blog pagination --> --}}
 
         </div>
     </section><!-- End Blog Section -->

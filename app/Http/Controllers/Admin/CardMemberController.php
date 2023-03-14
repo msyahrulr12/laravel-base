@@ -7,6 +7,7 @@ use App\Http\Requests\CardMemberCreateRequest;
 use App\Http\Requests\CardMemberRequest;
 use App\Http\Requests\CardMemberUpdateRequest;
 use App\Models\CardMember;
+use App\Service\IdCardService;
 use App\Service\UploadHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -415,5 +416,13 @@ class CardMemberController extends BaseController
 
         Alert::error('Terjadi Kesalahan!', 'Gagal menghapus data');
         return back();
+    }
+
+    public function generateExampleCard($id)
+    {
+        $cardMember = CardMember::findOrFail($id);
+
+        $idCardService = IdCardService::generateExample($cardMember);
+        dd($idCardService);
     }
 }

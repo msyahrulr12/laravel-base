@@ -227,6 +227,9 @@
 
             </div>
             {{-- <div class="py-5 text-right"><a href="#" class="btn btn-dark px-5 py-3 text-uppercase">Show me more</a></div> --}}
+            <div class="d-flex justify-content-center mb-5">
+                {{ $datas->links() }}
+            </div>
         </div>
     </div>
 

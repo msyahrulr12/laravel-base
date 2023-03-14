@@ -14,9 +14,9 @@ class DocumentationController extends Controller
         $this->model = $model;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $datas = $this->model->orderBy('created_at', 'desc')->get();
+        $datas = $this->model->orderBy('created_at', 'desc')->paginate(8);
         return view('pages.client.documentation.index', [
             'datas' => $datas
         ]);

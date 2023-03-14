@@ -10,7 +10,9 @@ use App\Service\IdCardService;
 use App\Service\QrCodeService;
 use App\Service\UploadHelper;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Permission;
 
@@ -53,6 +55,7 @@ class UserController extends BaseController
             'trim' => true
         ],
     ];
+
     private $detailColumns = [
         'name' => [
             'title' => 'Nama',
@@ -140,6 +143,30 @@ class UserController extends BaseController
         ],
         'qrcode_image' => [
             'title' => 'Gambar QR Code',
+            'type' => self::TYPE_IMAGE,
+            'show' => false,
+            'trim' => true
+        ],
+        'member_name_image' => [
+            'title' => 'Gambar Nama Member',
+            'type' => self::TYPE_IMAGE,
+            'show' => false,
+            'trim' => true
+        ],
+        'member_code_image' => [
+            'title' => 'Gambar Kode Member',
+            'type' => self::TYPE_IMAGE,
+            'show' => false,
+            'trim' => true
+        ],
+        'front_card_image' => [
+            'title' => 'Gambar Depan Kartu Member',
+            'type' => self::TYPE_IMAGE,
+            'show' => false,
+            'trim' => true
+        ],
+        'back_card_image' => [
+            'title' => 'Gambar Belakang Kartu Member',
             'type' => self::TYPE_IMAGE,
             'show' => false,
             'trim' => true
@@ -280,10 +307,10 @@ class UserController extends BaseController
 
         $request->request->set('ktp_image', $fullname);
 
-        $qrCodeService = new QrCodeService($this->getUser());
-        $qrCode = file_get_contents($qrCodeService->generate());
-        if (!$qrCode) abort(400);
-        $request->request->set('qrcode_image', $qrCodeService->getFilename());
+        // $qrCodeService = new QrCodeService($this->getUser());
+        // $qrCode = file_get_contents($qrCodeService->generate());
+        // if (!$qrCode) abort(400);
+        // $request->request->set('qrcode_image', $qrCodeService->getFilename());
 
         $result = $this->model->create($request->request->all());
         if ($result) {
@@ -375,6 +402,34 @@ class UserController extends BaseController
             $request->request->set('ktp_image', $fullname);
         }
 
+        if ($request->file('member_name_image')) {
+            $uploadHelper = new UploadHelper($request->file('member_name_image'));
+            $uploadSuccess = $uploadHelper->upload($data->file);
+            if (!$uploadSuccess) {
+                Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+                return redirect()->route($this->baseRoute.'index');
+            }
+            $fileType = $uploadHelper->getExtension();
+            $filename = $uploadHelper->getFilename();
+            $fullname = $filename . '.' . $fileType;
+
+            $request->request->set('member_name_image', $fullname);
+        }
+
+        if ($request->file('member_code_image')) {
+            $uploadHelper = new UploadHelper($request->file('member_code_image'));
+            $uploadSuccess = $uploadHelper->upload($data->file);
+            if (!$uploadSuccess) {
+                Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+                return redirect()->route($this->baseRoute.'index');
+            }
+            $fileType = $uploadHelper->getExtension();
+            $filename = $uploadHelper->getFilename();
+            $fullname = $filename . '.' . $fileType;
+
+            $request->request->set('member_code_image', $fullname);
+        }
+
         if (!$data->qrcode_image) {
             $qrCodeService = new QrCodeService($this->getUser());
             $qrCode = file_get_contents($qrCodeService->generate());
@@ -383,9 +438,6 @@ class UserController extends BaseController
         }
         $request->request->set('updated_by', Auth::user()->name);
         $request->request->set('ip_address', $request->ip());
-
-        $idCardService = new IdCardService($data);
-        dd($idCardService->generate());
 
         $result = $data->update($request->request->all());
 
@@ -417,6 +469,81 @@ class UserController extends BaseController
         }
 
         Alert::error('Terjadi Kesalahan!', 'Gagal menghapus data');
+        return back();
+    }
+
+    public function generateCard($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        if (!$user->profile_image || !$user->qrcode_image || !$user->member_name_image || !$user->member_code_image) {
+            Alert::error('Terjadi Kesalahan!', 'Gagal generate kartu member karena data member kurang lengkap. Mohon lengkapi data berikut : Foto profile, Foto QR Code, Foto Nama Member dan Foto Kode Member');
+            return redirect()->route($this->baseRoute.'index');
+        }
+
+        $idCardService = new IdCardService($user);
+        $fullPath = $idCardService->generate();
+        $expFile = explode('/', $fullPath);
+        $filename = $expFile[sizeof($expFile) - 1];
+        $uploadHelper = new UploadHelper(new UploadedFile($fullPath, $filename));
+        $uploadSuccess = $uploadHelper->upload($user->file);
+        if (!$uploadSuccess) {
+            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+            return redirect()->route($this->baseRoute.'index');
+        }
+        $fileType = $uploadHelper->getExtension();
+        $filename = $uploadHelper->getFilename();
+        $fullname = $filename . '.' . $fileType;
+        $frontCardImage = $fullname;
+
+        $fullPath = $idCardService->generateBackCard();
+        $expFile = explode('/', $fullPath);
+        $filename = $expFile[sizeof($expFile) - 1];
+        $uploadHelper = new UploadHelper(new UploadedFile($fullPath, $filename));
+        $uploadSuccess = $uploadHelper->upload($user->file);
+        if (!$uploadSuccess) {
+            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+            return redirect()->route($this->baseRoute.'index');
+        }
+        $fileType = $uploadHelper->getExtension();
+        $filename = $uploadHelper->getFilename();
+        $fullname = $filename . '.' . $fileType;
+        $backCardImage = $fullname;
+
+        $updateCard = [
+            'front_card_image' => $frontCardImage,
+            'back_card_image' => $backCardImage
+        ];
+
+        $result = $user->update($updateCard);
+        if ($result) {
+            Alert::success('Kartu member berhasil dibuat', 'Berhasil membuat kartu member');
+            return redirect()->route($this->baseRoute.'index');
+        }
+
+        Alert::error('Terjadi Kesalahan!', 'Gagal membuat kartu member');
+        return back();
+    }
+
+    public function generateQrCode($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $qrCodeService = new QrCodeService($user);
+        $qrCode = file_get_contents($qrCodeService->generate());
+        if (!$qrCode) abort(400);
+
+        $updateQrCode = [
+            'qrcode_image' => $qrCodeService->getFilename(),
+        ];
+
+        $result = $user->update($updateQrCode);
+        if ($result) {
+            Alert::success('QR Code member berhasil dibuat', 'Berhasil membuat QR Code');
+            return redirect()->route($this->baseRoute.'index');
+        }
+
+        Alert::error('Terjadi Kesalahan!', 'Gagal membuat QR Code');
         return back();
     }
 }

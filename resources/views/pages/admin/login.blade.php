@@ -38,7 +38,7 @@
 							<div class="card-body">
 								<div class="m-sm-4">
 									<div class="text-center">
-										<img src="{{ asset('assets/img/avatars/avatar.jpg') }}" alt="Charles Hall" class="img-fluid rounded-circle" width="132" height="132" />
+										<img src="{{ asset('assets/admin/img/login.jpg') }}" alt="Login Image" class="img-fluid rounded-circle" width="132" height="132" />
 									</div>
 									<form action="{{ route('admin.login.submit') }}" method="POST">
                                         @csrf

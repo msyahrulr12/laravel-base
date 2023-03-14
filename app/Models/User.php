@@ -53,6 +53,10 @@ class User extends Authenticatable
         'updated_by',
         'deleted_by',
         'region_id',
+        'member_name_image',
+        'member_code_image',
+        'front_card_image',
+        'back_card_image',
     ];
 
     /**

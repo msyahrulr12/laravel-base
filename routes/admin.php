@@ -58,6 +58,15 @@ Route::name('admin.')->group(function() {
         Route::resource('contact_us', ContactUsController::class);
         Route::resource('social_media', SocialMediaController::class);
         Route::resource('card_members', CardMemberController::class);
+
+        Route::name('users.')->prefix('users')->group(function() {
+            Route::get('card/generate/{userId}', [UserController::class, 'generateCard'])->name('generate');
+            Route::get('qr-code/generate/{userId}', [UserController::class, 'generateQrCode'])->name('generate-qr-code');
+        });
+
+        Route::prefix('card_members')->name('card_members.')->group(function() {
+            Route::get('generate/{id}', [CardMemberController::class, 'generateExampleCard'])->name('generate');
+        });
     });
 
 });

@@ -54,6 +54,11 @@
 
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                             <li>
+                                                <a class="dropdown-item" href="{{ route($baseRoute.'generate', $data->id) }}">
+                                                    <i class="align-middle" data-feather="copy"></i> <span class="align-middle">Generate</span>
+                                                </a>
+                                            </li>
+                                            <li>
                                                 <a class="dropdown-item" href="{{ route($baseRoute.'show', $data->id) }}">
                                                     <i class="align-middle" data-feather="eye"></i> <span class="align-middle">Detail</span>
                                                 </a>

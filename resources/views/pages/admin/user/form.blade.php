@@ -106,6 +106,26 @@
 </div>
 <div class="row mt-2">
     <div class="form-group col">
+        <label for="member_name_image" class="form-label">Gambar Nama Member</label>
+        <input type="file" name="member_name_image" id="member_name_image" class="form-control" value="{{ isset($data['member_name_image']) ? $data['member_name_image'] : '' }}">
+        @if (isset($data['member_name_image']))
+            <small>
+                Current File : <a href="{{ asset('storage/'.$data['member_name_image']) }}" target="_blank">{{ $data['member_name_image'] }}</a>
+            </small>
+        @endif
+    </div>
+    <div class="form-group col">
+        <label for="member_code_image" class="form-label">Gambar Kode Member</label>
+        <input type="file" name="member_code_image" id="member_code_image" class="form-control" value="{{ isset($data['member_code_image']) ? $data['member_code_image'] : '' }}">
+        @if (isset($data['member_code_image']))
+            <small>
+                Current File : <a href="{{ asset('storage/'.$data['member_code_image']) }}" target="_blank">{{ $data['member_code_image'] }}</a>
+            </small>
+        @endif
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="form-group col">
         <label for="status" class="form-label">Status</label><br>
         <input type="radio" name="status" id="status" value="1" {{ isset($data['status']) && null !== $data['status'] && $data['status'] == 1 ? 'checked' : '' }}> Aktif
         <input type="radio" name="status" id="status" value="1" {{ isset($data['status']) && null !== $data['status'] && $data['status'] == 0 ? 'checked' : '' }}> Tidak Aktif
