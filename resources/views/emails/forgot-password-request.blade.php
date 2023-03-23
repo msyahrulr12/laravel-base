@@ -273,7 +273,7 @@
         <p>Salam,</p>
 
         <p>TIM Laskar Merah Putih</p>
-		<p>Hubungi (021) 515 3166 untuk bantuan</p>
+		{{-- <p>Hubungi (021) 515 3166 untuk bantuan</p> --}}
 	</div>
 
 	<div class="media-social-container text-center">
