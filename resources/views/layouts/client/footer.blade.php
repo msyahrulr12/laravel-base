@@ -4,13 +4,13 @@
     <div class="container">
       <div class="row gy-4">
         <div class="col-lg-12 col-md-12 footer-info">
-          <a href="{{ route('home') }}" class="logo d-flex align-items-center">
-            <span>Laskar Merah Putih Indonesia Brigade III</span>
+          <a href="{{ route('home') }}" class="logo my-5">
+            <span class="pb-5" style="line-height: 1.5em;">
+                Laskar Merah Putih Indonesia Brigade III <br>
+                Korwil V Jawa Barat
+            </span>
           </a>
-          <a href="{{ route('home') }}" class="logo d-flex align-items-center">
-            <span>Korwil V Jawa Barat</span>
-          </a>
-          <div class="social-links d-flex mt-5 mb-2">
+          <div class="social-links d-flex mt-5 mb-2 my-5">
             @foreach ($social_media as $socialMedia)
             <a href="{{ $socialMedia->link }}" target="_blank" class="{{ $socialMedia->name }}"><i class="{{ $socialMedia->icon }}"></i></a>
             @endforeach
