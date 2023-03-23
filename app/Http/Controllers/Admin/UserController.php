@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\CardMember;
+use App\Models\Region;
 use App\Models\User;
 use App\Service\IdCardService;
 use App\Service\QrCodeService;
@@ -68,6 +70,13 @@ class UserController extends BaseController
             'type' => self::TYPE_TEXT,
             'show' => false,
             'trim' => true
+        ],
+        'region' => [
+            'title' => 'Wilayah',
+            'type' => self::TYPE_BELONGS_TO,
+            'show' => false,
+            'trim' => true,
+            'child_field' => 'name'
         ],
         'email' => [
             'title' => 'Email',
@@ -270,6 +279,12 @@ class UserController extends BaseController
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'regions' => Region::all(),
+            'card_members' => CardMember::all(),
+            'data' => [
+                'serial_number' => User::getCurrentSerialNumber(),
+                'code' => User::generateCode(),
+            ],
         ]);
     }
 
@@ -307,12 +322,39 @@ class UserController extends BaseController
 
         $request->request->set('ktp_image', $fullname);
 
+        $uploadHelper = new UploadHelper($request->file('member_name_image'));
+        $uploadSuccess = $uploadHelper->upload();
+        if (!$uploadSuccess) {
+            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+            return redirect()->route($this->baseRoute.'index');
+        }
+        $fileType = $uploadHelper->getExtension();
+        $filename = $uploadHelper->getFilename();
+        $fullname = $filename . '.' . $fileType;
+
+        $request->request->set('member_name_image', $fullname);
+
+        $uploadHelper = new UploadHelper($request->file('member_code_image'));
+        $uploadSuccess = $uploadHelper->upload();
+        if (!$uploadSuccess) {
+            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
+            return redirect()->route($this->baseRoute.'index');
+        }
+        $fileType = $uploadHelper->getExtension();
+        $filename = $uploadHelper->getFilename();
+        $fullname = $filename . '.' . $fileType;
+
+        $request->request->set('member_code_image', $fullname);
+
         // $qrCodeService = new QrCodeService($this->getUser());
         // $qrCode = file_get_contents($qrCodeService->generate());
         // if (!$qrCode) abort(400);
         // $request->request->set('qrcode_image', $qrCodeService->getFilename());
 
+        $request->request->set('password', bcrypt($request->request->get('password')));
+
         $result = $this->model->create($request->request->all());
+
         if ($result) {
             Alert::success('Buat Data Berhasil', 'Berhasil membuat data  baru');
             return redirect()->route($this->baseRoute.'index');
@@ -358,6 +400,8 @@ class UserController extends BaseController
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'regions' => Region::all(),
+            'card_members' => CardMember::all(),
         ]);
     }
 

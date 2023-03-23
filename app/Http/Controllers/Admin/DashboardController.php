@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CardMember;
+use App\Models\Documentation;
+use App\Models\Region;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends BaseController
@@ -20,6 +24,10 @@ class DashboardController extends BaseController
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'totalMembers' => User::count(),
+            'totalRegions' => Region::count(),
+            'totalCards' => CardMember::count(),
+            'totalDocumentations' => Documentation::count(),
         ]);
     }
 }

@@ -2,11 +2,11 @@
 <div class="row mt-2">
     <div class="form-group col">
         <label for="serial_number" class="form-label">Nomor Urut</label>
-        <input type="number" name="serial_number" id="serial_number" class="form-control" value="{{ isset($data['serial_number']) ? $data['serial_number'] : '' }}" readonly>
+        <input type="number" name="serial_number" id="serial_number" class="form-control" value="{{ isset($data['serial_number']) ? $data['serial_number'] : '' }}"{{--  readonly --}}>
     </div>
     <div class="form-group col">
         <label for="code" class="form-label">Kode</label>
-        <input type="text" name="code" id="code" class="form-control" value="{{ isset($data['code']) ? $data['code'] : '' }}" readonly>
+        <input type="text" name="code" id="code" class="form-control" value="{{ isset($data['code']) ? $data['code'] : '' }}"{{--  readonly --}}>
     </div>
 </div>
 <div class="row mt-2">
@@ -22,11 +22,11 @@
 <div class="row mt-2">
     <div class="form-group col">
         <label for="short_name" class="form-label">Password</label>
-        <input type="text" name="short_name" id="short_name" class="form-control" value="{{ isset($data['short_name']) ? $data['short_name'] : '' }}">
+        <input type="password" name="short_name" id="short_name" class="form-control" value="{{ isset($data['short_name']) ? $data['short_name'] : '' }}">
     </div>
     <div class="form-group col">
         <label for="re_enter_password" class="form-label">Re Enter Password</label>
-        <input type="text" name="re_enter_password" id="re_enter_password" class="form-control">
+        <input type="password" name="re_enter_password" id="re_enter_password" class="form-control">
     </div>
 </div>
 <div class="row mt-2">
@@ -140,5 +140,28 @@
     <div class="form-group col">
         <label for="address" class="form-label">Alamat</label>
         <textarea name="address" id="address" class="form-control" rows="8">{{ isset($data['address']) ? $data['address'] : '' }}</textarea>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="form-group col">
+        <label for="region_id" class="form-label">Wilayah</label>
+        <select name="region_id" id="region_id" class="form-control">
+            <option value="" {{ isset($data['region_id']) && $data['region_id'] == '' ? 'selected' : '' }}>Pilih Wilayah</option>
+
+            @foreach ($regions as $region)
+            <option value="{{ $region->id }}" {{ isset($data['region_id']) && $data['region_id'] == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="form-group col">
+        <label for="card_member_id" class="form-label">Jenis Kartu</label>
+        <select name="card_member_id" id="card_member_id" class="form-control">
+            <option value="" {{ isset($data['card_member_id']) && $data['card_member_id'] == '' ? 'selected' : '' }}>Pilih Jenis Kartu</option>
+
+            @foreach ($card_members as $card_member)
+            <option value="{{ $card_member->id }}" {{ isset($data['card_member_id']) && $data['card_member_id'] == $card_member->id ? 'selected' : '' }}>{{ $card_member->code }}</option>
+            @endforeach
+        </select>
     </div>
 </div>

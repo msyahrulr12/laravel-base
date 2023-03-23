@@ -5,24 +5,27 @@
   <section id="hero" class="hero">
     <div class="container position-relative">
       <div class="row gy-5" data-aos="fade-in">
-        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
-          <h2>Selamat Datang di <span>Laskar Merah Putih Indonesia Brigade III</span> <br> <span>Korwil V Jawa Barat</span></h2>
-          {{-- <p>Sed autem laudantium dolores. Voluptatem itaque ea consequatur eveniet. Eum quas beatae cumque eum quaerat.</p> --}}
-          <div class="d-flex justify-content-center justify-content-lg-start">
-            {{-- <a href="#about" class="btn-get-started">Get Started</a> --}}
-            {{-- <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a> --}}
-          </div>
-        </div>
-        <div class="col-lg-6 order-1 order-lg-2">
+        <div class="col-lg-12 order-1 order-lg-2">
             <div class="row">
-                <div class="col-sm-6">
-                    <img src="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" class="img w-100 h-75" alt="" data-aos="zoom-out" data-aos-delay="100">
+                <div class="col-sm-3">
+                    <img src="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" class="img w-75 h-75 d-block mx-auto" alt="" data-aos="zoom-out" data-aos-delay="100">
                 </div>
                 <div class="col-sm-6">
-                    <img src="{{ asset('storage/167496954311ror8Tzme.png') }}" class="img w-100 h-75" alt="" data-aos="zoom-out" data-aos-delay="100">
+                    <br><br><br>
+                    <h2 class="text-center">
+                        <span>Laskar Merah Putih Indonesia</span> <br>
+                        <span>Markas Komando</span> <br>
+                        <span> Brigade III Korwil V Jawa Barat</span>
+                    </h2>
+                </div>
+                <div class="col-sm-3">
+                    <img src="{{ asset('storage/167496954311ror8Tzme.png') }}" class="img w-75 h-75 d-block mx-auto" alt="" data-aos="zoom-out" data-aos-delay="100">
                 </div>
             </div>
         </div>
+        {{-- <div class="col-lg-12 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
+          <h2>Selamat Datang di <span>Laskar Merah Putih Indonesia Brigade III</span> <br> <span>Korwil V Jawa Barat</span></h2>
+        </div> --}}
       </div>
     </div>
 

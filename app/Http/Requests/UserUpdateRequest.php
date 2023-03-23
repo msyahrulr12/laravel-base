@@ -51,6 +51,7 @@ class UserUpdateRequest extends FormRequest
             'login_expired_in' => '',
             'login_expired_in_seconds' => '',
             'is_logged_in' => '',
+            'region_id' => '',
             'status' => 'required',
             'is_blocked' => '',
             'ip_address' => '',

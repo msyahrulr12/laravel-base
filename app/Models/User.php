@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -46,6 +47,7 @@ class User extends Authenticatable
         'is_blocked',
         'ip_address',
         'forgot_password_tried',
+        'forgot_password_requested_at',
         'forgot_password_code',
         'forgot_password_token',
         'forgot_password_expired_at',
@@ -57,6 +59,7 @@ class User extends Authenticatable
         'member_code_image',
         'front_card_image',
         'back_card_image',
+        'card_member_id',
     ];
 
     /**
@@ -81,6 +84,23 @@ class User extends Authenticatable
     public function region()
     {
         return $this->belongsTo(Region::class);
+    }
+
+    public function card_member()
+    {
+        return $this->belongsTo(CardMember::class);
+    }
+
+    public static function generateCode()
+    {
+        $currentSerialNumber = self::getCurrentSerialNumber();
+        $yearNow = date('Y');
+        $year = substr($yearNow, 2, 4);
+        $month = date('m');
+        $uniqueCode = $year.$month.$currentSerialNumber;
+        $code = 'NRA '.$uniqueCode;
+
+        return $code;
     }
 
     public static function getCurrentSerialNumber()
@@ -117,5 +137,23 @@ class User extends Authenticatable
         }
 
         return $code;
+    }
+
+    public function generateForgotPasswordToken()
+    {
+        $this->forgot_password_code = $this->generateForgotPasswordCode();
+        return base64_encode($this->id.':'.$this->forgot_password_code.':'.$this->email);
+    }
+
+    public function verifyForgotPasswordToken($generatedToken)
+    {
+        list($id, $code, $email) = explode(':', base64_decode($generatedToken));
+        return $id == $this->id && $code == $this->forgot_password_code && $email == $this->email;
+    }
+
+    public function generateForgotPasswordCode()
+    {
+        $this->forgot_password_code = Str::random(30);
+        return $this->forgot_password_code;
     }
 }

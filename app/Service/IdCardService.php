@@ -26,7 +26,7 @@ class IdCardService
     {
         $publicStorage = Storage::disk('public');
 
-        $cardMember = CardMember::first();
+        $cardMember = $this->user->card_member ?? CardMember::first();
 
         # get front background image card
         $frontBackgroundImage = $cardMember->front_background_image;

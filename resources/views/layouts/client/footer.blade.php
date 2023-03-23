@@ -23,6 +23,9 @@
             {!! $contact_us->address !!}
             <strong>Phone:</strong> {{ $contact_us->phone_number }}<br>
             <strong>Email:</strong> {{ $contact_us->email }}<br>
+            <strong>
+                <a href="{{ route('admin.login') }}" class="text-primary" style="font-size: 1.6em;">--LOGIN--</a>
+            </strong>
           </p>
 
         </div>

@@ -36,6 +36,15 @@
                             <a href="{{ asset('storage/'.$data->$key) }}" target="_blank">{{ $data->$key }}</a>
                         @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_LINK)
                             <a href="{{ $data->$key }}" target="_blank">{{ $data->$key }}</a>
+                        @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_BELONGS_TO)
+                            <table class="table">
+                                @foreach ($data->$key->toArray() as $k => $v)
+                                <tr>
+                                    <th>{!! $k !!}</th>
+                                    <td>{!! $v !!}</td>
+                                </tr>
+                                @endforeach
+                            </table>
                         @endif
                     </td>
                 </tr>

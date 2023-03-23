@@ -26,7 +26,7 @@ class UserCreateRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required|unique:regions',
-            'email' => 'required',
+            'email' => 'required|unique:users',
             'email_verified_at' => '',
             'password' => '',
             'phone_number' => 'required',
@@ -41,6 +41,7 @@ class UserCreateRequest extends FormRequest
             'serial_number' => 'required',
             'profile_image' => 'required',
             'ktp_image' => '',
+            'region_id' => '',
             'qrcode_image' => '',
             'login_tried' => '',
             'login_expired_in' => '',

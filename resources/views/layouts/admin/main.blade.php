@@ -13,12 +13,12 @@
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
+    <link href="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" rel="icon">
 
 	<title>Laskar Merah Putih</title>
 
 	<link href="{{ asset('assets/admin/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    {{-- <script src="js/sweetalert.min.js"></script> --}}
 
     <script src="https://cdn.tiny.cloud/1/vbv648tcvjj964pg4cw6z4uewq92d4j2zjkxaa0bsvvz2yb8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>

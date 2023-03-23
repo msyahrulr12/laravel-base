@@ -12,6 +12,7 @@ class BaseController extends Controller
     public const TYPE_IMAGE = 'img';
     public const TYPE_FILE = 'file';
     public const TYPE_LINK = 'link';
+    public const TYPE_BELONGS_TO = 'belongs_to';
 
     public function checkPermission($permission)
     {

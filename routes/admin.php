@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CardMemberController;
 use App\Http\Controllers\Admin\ContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentationController;
+use App\Http\Controllers\Admin\ForgotPasswordController;
 use App\Http\Controllers\Admin\FormController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RegionController;
@@ -37,6 +38,14 @@ Route::name('admin.')->group(function() {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login.submit');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    /**
+     * Forgot Password
+     */
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'requestForm'])->name('forgot-password');
+    Route::post('/forgot-password/verify-email', [ForgotPasswordController::class, 'verifyEmail'])->name('forgot-password.verify-email');
+    Route::get('/forgot-password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('forgot-password.verify-token');
+    Route::post('/forgot-password/change', [ForgotPasswordController::class, 'changePassword'])->name('forgot-password.change');
 
     /**
      * Role and Permission
