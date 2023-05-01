@@ -32,7 +32,7 @@
 					<div class="d-table-cell align-middle">
 
 						<div class="text-center mt-4">
-							<h1 class="h2">Selamat Datang di Website Laskar Merah Putih</h1>
+							<h1 class="h2">Selamat Datang</h1>
 							<p class="lead">
 								Login untuk melanjutkan
 							</p>

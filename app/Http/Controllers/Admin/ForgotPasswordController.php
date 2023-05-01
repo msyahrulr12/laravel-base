@@ -65,18 +65,18 @@ class ForgotPasswordController extends Controller
         $user = User::where('forgot_password_token', $token)->first();
         if (!$user) {
             Alert::error('Verifikasi Lupa Password Gagal!', 'Token yang Anda masukkan salah');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         if (Carbon::now()->diffInMinutes($user->forgot_password_expired_at) > 30) {
             Alert::error('Request Lupa Password Gagal!', 'Token telah kadaluwarsa');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         $verifyToken = $user->verifyForgotPasswordToken($token);
         if (!$verifyToken) {
             Alert::error('Verifikasi Lupa Password Gagal!', 'Token yang Anda masukkan salah');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         return view('pages.admin.forgot-password-change', [
@@ -89,24 +89,24 @@ class ForgotPasswordController extends Controller
         $token = $request->get('token');
         if (!$token) {
             Alert::error('Ubah Password Gagal!', 'Token tidak boleh kosong');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         $user = User::where('forgot_password_token', $token)->first();
         if (!$user) {
             Alert::error('Verifikasi Lupa Password Gagal!', 'Token yang Anda masukkan salah');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         if (Carbon::now()->diffInMinutes($user->forgot_password_expired_at) > 30) {
             Alert::error('Request Lupa Password Gagal!', 'Token telah kadaluwarsa');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         $verifyToken = $user->verifyForgotPasswordToken($token);
         if (!$verifyToken) {
             Alert::error('Verifikasi Lupa Password Gagal!', 'Token yang Anda masukkan salah');
-            return back();
+            return redirect()->route('admin.login');
         }
 
         $newPassword = $request->get('new_password');

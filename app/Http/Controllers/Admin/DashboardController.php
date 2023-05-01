@@ -25,9 +25,6 @@ class DashboardController extends BaseController
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
             'totalMembers' => User::count(),
-            'totalRegions' => Region::count(),
-            'totalCards' => CardMember::count(),
-            'totalDocumentations' => Documentation::count(),
         ]);
     }
 }

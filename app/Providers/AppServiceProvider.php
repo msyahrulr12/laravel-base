@@ -27,8 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::share('social_media', SocialMedia::all());
-        View::share('contact_us', ContactUs::first());
         Paginator::useBootstrap();
     }
 }
