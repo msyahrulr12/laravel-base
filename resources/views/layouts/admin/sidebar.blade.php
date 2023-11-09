@@ -1,7 +1,7 @@
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
         <a class="sidebar-brand" href="index.html">
-            <span class="align-middle">Laskar Merah Putih</span>
+            <span class="align-middle">Nama Perusahaan</span>
         </a>
 
         <ul class="sidebar-nav">

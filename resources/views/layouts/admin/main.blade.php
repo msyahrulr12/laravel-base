@@ -15,7 +15,7 @@
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
     <link href="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" rel="icon">
 
-	<title>Laskar Merah Putih</title>
+	<title>Nama Perusahaan</title>
 
 	<link href="{{ asset('assets/admin/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">

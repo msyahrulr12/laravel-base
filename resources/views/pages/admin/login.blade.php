@@ -15,7 +15,7 @@
     <link href="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" rel="icon">
 	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-in.html" />
 
-	<title>Laskar Merah Putih - Halaman Login</title>
+	<title>Nama Perusahaan - Halaman Login</title>
 
 	<link href="{{ asset('assets/admin/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
 							<div class="card-body">
 								<div class="m-sm-4">
 									<div class="text-center">
-										<img src="{{ asset('storage/1674969542rvJhVJyMDd.png') }}" alt="Login Image" class="img-fluid rounded-circle" width="132" height="132" />
+										<img src="{{ asset('assets/admin/img/login.jpg') }}" alt="Login Image" class="img-fluid rounded-circle" width="132" height="132" />
 									</div>
 									<form action="{{ route('admin.login.submit') }}" method="POST">
                                         @csrf
