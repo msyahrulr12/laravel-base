@@ -13,6 +13,7 @@ class BaseController extends Controller
     public const TYPE_FILE = 'file';
     public const TYPE_LINK = 'link';
     public const TYPE_BELONGS_TO = 'belongs_to';
+    public const TYPE_MANY_TO_MANY = 'many_to_many';
 
     public function checkPermission($permission)
     {

@@ -23,31 +23,31 @@
         <table class="table">
             <tbody>
                 @foreach ($columns as $key => $column)
-                <tr>
-                    <th>{{ $column['title'] }}</th>
-                    <td>
-                        @if ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_TEXT)
-                            {!! $data->$key !!}
-                        @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_IMAGE)
-                            <a href="{{ asset('storage/'.$data->$key) }}" target="_blank">
-                                <img src="{{ asset('storage/'.$data->$key) }}" width="150">
-                            </a>
-                        @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_FILE)
-                            <a href="{{ asset('storage/'.$data->$key) }}" target="_blank">{{ $data->$key }}</a>
-                        @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_LINK)
-                            <a href="{{ $data->$key }}" target="_blank">{{ $data->$key }}</a>
-                        @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_BELONGS_TO)
-                            <table class="table">
-                                @foreach ($data->$key->toArray() as $k => $v)
-                                <tr>
-                                    <th>{!! $k !!}</th>
-                                    <td>{!! $v !!}</td>
-                                </tr>
-                                @endforeach
-                            </table>
-                        @endif
-                    </td>
-                </tr>
+                    <tr>
+                        <th>{{ $column['title'] }}</th>
+                        <td>
+                            @if ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_TEXT)
+                                {!! $data->$key !!}
+                            @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_IMAGE)
+                                <a href="{{ asset('storage/'.$data->$key) }}" target="_blank">
+                                    <img src="{{ asset('storage/'.$data->$key) }}" width="150">
+                                </a>
+                            @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_FILE)
+                                <a href="{{ asset('storage/'.$data->$key) }}" target="_blank">{{ $data->$key }}</a>
+                            @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_LINK)
+                                <a href="{{ $data->$key }}" target="_blank">{{ $data->$key }}</a>
+                            @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_BELONGS_TO)
+                                <table class="table">
+                                    @foreach ($data->$key->toArray() as $k => $v)
+                                    <tr>
+                                        <th>{!! $k !!}</th>
+                                        <td>{!! $v !!}</td>
+                                    </tr>
+                                    @endforeach
+                                </table>
+                            @endif
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>

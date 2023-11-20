@@ -56,9 +56,9 @@
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    <a class="dropdown-item" href="#" data-id="{{ $data->id }}" data-route="{{ $baseRoute }}" onclick="this.closest('form').submit();return false;">
+                                                    <button class="dropdown-item confirm-delete-button" data-id="{{ $data->id }}" data-route="{{ $baseRoute }}">
                                                         <i class="align-middle" data-feather="delete"></i> <span class="align-middle">Hapus</span>
-                                                    </a>
+                                                    </button>
                                                 </form>
                                             </li>
                                         </ul>

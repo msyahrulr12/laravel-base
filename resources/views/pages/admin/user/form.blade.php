@@ -1,46 +1,91 @@
 @csrf
+
 <div class="row mt-2">
     <div class="form-group col">
-        <label for="serial_number" class="form-label">Nomor Urut</label>
-        <input type="number" name="serial_number" id="serial_number" class="form-control" value="{{ isset($data['serial_number']) ? $data['serial_number'] : '' }}"{{--  readonly --}}>
-    </div>
-    <div class="form-group col">
         <label for="code" class="form-label">Kode</label>
-        <input type="text" name="code" id="code" class="form-control" value="{{ isset($data['code']) ? $data['code'] : '' }}"{{--  readonly --}}>
+        <input type="text" name="code" id="code" class="form-control" value="{{ isset($data['code']) ? $data['code'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['code']))
+            @foreach ($errors->messages()['code'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
     <div class="form-group col">
         <label for="name" class="form-label">Nama</label>
         <input type="text" name="name" id="name" class="form-control" value="{{ isset($data['name']) ? $data['name'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['name']))
+            @foreach ($errors->messages()['name'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="email" class="form-label">Email</label>
         <input type="text" name="email" id="email" class="form-control" value="{{ isset($data['email']) ? $data['email'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['email']))
+            @foreach ($errors->messages()['email'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
     <div class="form-group col">
         <label for="short_name" class="form-label">Password</label>
         <input type="password" name="short_name" id="short_name" class="form-control" value="{{ isset($data['short_name']) ? $data['short_name'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['password']))
+            @foreach ($errors->messages()['password'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="re_enter_password" class="form-label">Re Enter Password</label>
         <input type="password" name="re_enter_password" id="re_enter_password" class="form-control">
+
+        @if ($errors->any() && isset($errors->messages()['re_enter_password']))
+            @foreach ($errors->messages()['re_enter_password'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
     <div class="form-group col">
         <label for="phone_number" class="form-label">Nomor Telepon</label>
         <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ isset($data['phone_number']) ? $data['phone_number'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['phone_number']))
+            @foreach ($errors->messages()['phone_number'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="birthplace" class="form-label">Tempat Lahir</label>
         <input type="text" name="birthplace" id="birthplace" class="form-control" value="{{ isset($data['birthplace']) ? $data['birthplace'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['birthplace']))
+            @foreach ($errors->messages()['birthplace'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="birthdate" class="form-label">Tanggal Lahir</label>
         <input type="date" name="birthdate" id="birthdate" class="form-control" value="{{ isset($data['birthdate']) ? $data['birthdate'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['birthdate']))
+            @foreach ($errors->messages()['birthdate'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
@@ -56,6 +101,12 @@
             <option value="KONGHUCU" {{ isset($data['religion']) && $data['religion'] == 'KONGHUCU' ? 'selected' : '' }}>KONGHUCU</option>
             <option value="LAINNYA" {{ isset($data['religion']) && $data['religion'] == 'LAINNYA' ? 'selected' : '' }}>LAINNYA</option>
         </select>
+
+        @if ($errors->any() && isset($errors->messages()['religion']))
+            @foreach ($errors->messages()['religion'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="education" class="form-label">Pendidikan</label>
@@ -72,16 +123,34 @@
             <option value="S3" {{ isset($data['education']) && $data['education'] == 'S3' ? 'selected' : '' }}>S3</option>
             <option value="LAINNYA" {{ isset($data['education']) && $data['education'] == 'LAINNYA' ? 'selected' : '' }}>LAINNYA</option>
         </select>
+
+        @if ($errors->any() && isset($errors->messages()['education']))
+            @foreach ($errors->messages()['education'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
     <div class="form-group col">
         <label for="job" class="form-label">Pekerjaan</label>
         <input type="text" name="job" id="job" class="form-control" value="{{ isset($data['job']) ? $data['job'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['job']))
+            @foreach ($errors->messages()['job'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="skill" class="form-label">Keahlian</label>
         <input type="text" name="skill" id="skill" class="form-control" value="{{ isset($data['skill']) ? $data['skill'] : '' }}">
+
+        @if ($errors->any() && isset($errors->messages()['skill']))
+            @foreach ($errors->messages()['skill'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
@@ -93,6 +162,12 @@
                 Current File : <a href="{{ asset('storage/'.$data['profile_image']) }}" target="_blank">{{ $data['profile_image'] }}</a>
             </small>
         @endif
+
+        @if ($errors->any() && isset($errors->messages()['profile_image']))
+            @foreach ($errors->messages()['profile_image'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="ktp_image" class="form-label">Foto KTP</label>
@@ -102,25 +177,11 @@
                 Current File : <a href="{{ asset('storage/'.$data['ktp_image']) }}" target="_blank">{{ $data['ktp_image'] }}</a>
             </small>
         @endif
-    </div>
-</div>
-<div class="row mt-2">
-    <div class="form-group col">
-        <label for="member_name_image" class="form-label">Gambar Nama Member</label>
-        <input type="file" name="member_name_image" id="member_name_image" class="form-control" value="{{ isset($data['member_name_image']) ? $data['member_name_image'] : '' }}">
-        @if (isset($data['member_name_image']))
-            <small>
-                Current File : <a href="{{ asset('storage/'.$data['member_name_image']) }}" target="_blank">{{ $data['member_name_image'] }}</a>
-            </small>
-        @endif
-    </div>
-    <div class="form-group col">
-        <label for="member_code_image" class="form-label">Gambar Kode Member</label>
-        <input type="file" name="member_code_image" id="member_code_image" class="form-control" value="{{ isset($data['member_code_image']) ? $data['member_code_image'] : '' }}">
-        @if (isset($data['member_code_image']))
-            <small>
-                Current File : <a href="{{ asset('storage/'.$data['member_code_image']) }}" target="_blank">{{ $data['member_code_image'] }}</a>
-            </small>
+
+        @if ($errors->any() && isset($errors->messages()['ktp_image']))
+            @foreach ($errors->messages()['ktp_image'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
         @endif
     </div>
 </div>
@@ -129,39 +190,34 @@
         <label for="status" class="form-label">Status</label><br>
         <input type="radio" name="status" id="status" value="1" {{ isset($data['status']) && null !== $data['status'] && $data['status'] == 1 ? 'checked' : '' }}> Aktif
         <input type="radio" name="status" id="status" value="1" {{ isset($data['status']) && null !== $data['status'] && $data['status'] == 0 ? 'checked' : '' }}> Tidak Aktif
+
+        @if ($errors->any() && isset($errors->messages()['status']))
+            @foreach ($errors->messages()['status'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
     <div class="form-group col">
         <label for="is_blocked" class="form-label">Blokir</label><br>
         <input type="radio" name="is_blocked" id="is_blocked" value="1" {{ isset($data['is_blocked']) && null !== $data['is_blocked'] && $data['is_blocked'] == 1 ? 'checked' : ''}}> Ya
         <input type="radio" name="is_blocked" id="is_blocked" value="0" {{ isset($data['is_blocked']) && null !== $data['is_blocked'] && $data['is_blocked'] == 0 ? 'checked' : '' }}> Tidak
+
+        @if ($errors->any() && isset($errors->messages()['is_blocked']))
+            @foreach ($errors->messages()['is_blocked'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
     </div>
 </div>
 <div class="row mt-2">
     <div class="form-group col">
         <label for="address" class="form-label">Alamat</label>
         <textarea name="address" id="address" class="form-control" rows="8">{{ isset($data['address']) ? $data['address'] : '' }}</textarea>
-    </div>
-</div>
 
-<div class="row mt-2">
-    <div class="form-group col">
-        <label for="region_id" class="form-label">Wilayah</label>
-        <select name="region_id" id="region_id" class="form-control">
-            <option value="" {{ isset($data['region_id']) && $data['region_id'] == '' ? 'selected' : '' }}>Pilih Wilayah</option>
-
-            @foreach ($regions as $region)
-            <option value="{{ $region->id }}" {{ isset($data['region_id']) && $data['region_id'] == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+        @if ($errors->any() && isset($errors->messages()['address']))
+            @foreach ($errors->messages()['address'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
             @endforeach
-        </select>
-    </div>
-    <div class="form-group col">
-        <label for="card_member_id" class="form-label">Jenis Kartu</label>
-        <select name="card_member_id" id="card_member_id" class="form-control">
-            <option value="" {{ isset($data['card_member_id']) && $data['card_member_id'] == '' ? 'selected' : '' }}>Pilih Jenis Kartu</option>
-
-            @foreach ($card_members as $card_member)
-            <option value="{{ $card_member->id }}" {{ isset($data['card_member_id']) && $data['card_member_id'] == $card_member->id ? 'selected' : '' }}>{{ $card_member->code }}</option>
-            @endforeach
-        </select>
+        @endif
     </div>
 </div>

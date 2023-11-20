@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\PermissionRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Service\PermissionService;
 use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Permission;
+
+use function Ramsey\Uuid\v1;
 
 class PermissionController extends BaseController
 {
@@ -19,10 +19,20 @@ class PermissionController extends BaseController
     private $columns = [
         'name' => 'Nama',
     ];
+    private $detailColumns = [
+        'name' => [
+            'title' => 'Nama',
+            'type' => self::TYPE_TEXT,
+            'show' => false,
+            'trim' => true
+        ],
+    ];
+    private $permissionService;
 
-    public function __construct(Permission $model)
+    public function __construct(Permission $model, PermissionService $permissionService)
     {
         $this->model = $model;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -35,6 +45,7 @@ class PermissionController extends BaseController
         $this->checkPermission('list '.$this->permission);
 
         $datas = $this->model->orderBy('id', 'desc')->get();
+
         return view($this->baseView.'index', [
             'datas' => $datas,
             'title' => $this->title,
@@ -57,6 +68,7 @@ class PermissionController extends BaseController
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'create' => true,
         ]);
     }
 
@@ -70,13 +82,19 @@ class PermissionController extends BaseController
     {
         $this->checkPermission('create '.$this->permission);
 
-        $result = $this->model->create($request->all());
-        if ($result) {
+        $result = $this->permissionService->create($request);
+        if (count($result->getErrors()) < 1) {
             Alert::success('Buat Data Berhasil', 'Berhasil membuat data  baru');
             return redirect()->route($this->baseRoute.'index');
         }
 
-        Alert::error('Terjadi Kesalahan!', 'Gagal membuat data baru');
+        $errors = $result->getErrors();
+        $messageErrors = array_map(function($r) {
+            return $r->getMessage();
+        }, $errors);
+        $message = implode(', ', $messageErrors);
+
+        Alert::error('Gagal membuat data baru!', $message);
         return back();
     }
 
@@ -90,12 +108,13 @@ class PermissionController extends BaseController
     {
         $this->checkPermission('show '.$this->permission);
 
-        $data = $this->model->findOrFail($id);
+        $data = $this->permissionService->find($id);
         return view($this->baseView.'show', [
-            'data' => $data,
+            'data' => $data->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'columns' => $this->detailColumns,
         ]);
     }
 
@@ -115,6 +134,7 @@ class PermissionController extends BaseController
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'create' => false,
         ]);
     }
 
@@ -130,7 +150,7 @@ class PermissionController extends BaseController
         $this->checkPermission('update '.$this->permission);
 
         $data = $this->model->findOrFail($id);
-        $result = $data->update($request->all());
+        $result = $this->permissionServiceupdate($request);
 
         if ($result) {
             Alert::success('Edit Data Berhasil', 'Berhasil mengubah data ');

@@ -27,6 +27,7 @@
                         <th class="d-none d-xl-table-cell text-center w-25">Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @if (sizeof($datas) > 0)
                         @foreach ($datas as $key => $data)
@@ -54,16 +55,6 @@
 
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                             <li>
-                                                <a class="dropdown-item" href="{{ route($baseRoute.'generate-qr-code', $data->id) }}">
-                                                    <i class="align-middle" data-feather="align-justify"></i> <span class="align-middle">Generate QR Code</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route($baseRoute.'generate', $data->id) }}">
-                                                    <i class="align-middle" data-feather="file"></i> <span class="align-middle">Generate Card</span>
-                                                </a>
-                                            </li>
-                                            <li>
                                                 <a class="dropdown-item" href="{{ route($baseRoute.'show', $data->id) }}">
                                                     <i class="align-middle" data-feather="eye"></i> <span class="align-middle">Detail</span>
                                                 </a>
@@ -78,9 +69,9 @@
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    <a class="dropdown-item" href="#" data-id="{{ $data->id }}" data-route="{{ $baseRoute }}" onclick="this.closest('form').submit();return false;">
+                                                    <button class="dropdown-item confirm-delete-button" data-id="{{ $data->id }}" data-route="{{ $baseRoute }}">
                                                         <i class="align-middle" data-feather="delete"></i> <span class="align-middle">Hapus</span>
-                                                    </a>
+                                                    </button>
                                                 </form>
                                             </li>
                                         </ul>

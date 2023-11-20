@@ -15,10 +15,10 @@ class CreateMenuRoleTable extends Migration
     {
         Schema::create('menu_role', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('menu_id');
-            $table->unsignedBigInteger('role_id');
-            $table->foreign('menu_id')->references('id')->on('menus');
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->unsignedBigInteger('menu_id')->nullable();
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->foreign('menu_id')->references('id')->on('menus')->onDelete('set null');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
             $table->timestamps();
 
             $table->index('menu_id');

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c24108b9d27593857e86ac6244c88441",
+    "content-hash": "bd44e6d4c5416a6f6d567588fecc3635",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3438,21 +3438,21 @@
         },
         {
             "name": "realrashid/sweet-alert",
-            "version": "v5.1.0",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/realrashid/sweet-alert.git",
-                "reference": "fb837beaa52568fb3106d311ff3c7a7b8e543608"
+                "reference": "769f951053cd3363fd7fb7a1dd30f9828b619b44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/realrashid/sweet-alert/zipball/fb837beaa52568fb3106d311ff3c7a7b8e543608",
-                "reference": "fb837beaa52568fb3106d311ff3c7a7b8e543608",
+                "url": "https://api.github.com/repos/realrashid/sweet-alert/zipball/769f951053cd3363fd7fb7a1dd30f9828b619b44",
+                "reference": "769f951053cd3363fd7fb7a1dd30f9828b619b44",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^5.6|^6.0|^7.0|^8.0|^9.0|^9.11|9.14.*",
-                "php": "^7.2|^8.0"
+                "laravel/framework": "^5.6|^6.0|^7.0|^8.0|^9.0|^9.11|9.14.*|^10.0",
+                "php": "^7.2|^8.0|^8.1"
             },
             "require-dev": {
                 "symfony/thanks": "^1.0"
@@ -3488,7 +3488,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES FOR LARAVEL BY RASHID ALI",
+            "description": "Laravel Sweet Alert Is A Package For Laravel Provides An Easy Way To Display Alert Messages Using The SweetAlert2 Library.",
             "homepage": "https://github.com/realrashid/sweet-alert",
             "keywords": [
                 "alert",
@@ -3524,7 +3524,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-28T13:28:03+00:00"
+            "time": "2023-08-07T19:23:17+00:00"
         },
         {
             "name": "simplesoftwareio/simple-qrcode",
@@ -8734,5 +8734,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

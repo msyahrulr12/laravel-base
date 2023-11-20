@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Service\MenuService;
+use App\Service\RoleService;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Permission;
+
+use function Ramsey\Uuid\v1;
 
 class RoleController extends BaseController
 {
@@ -20,10 +21,28 @@ class RoleController extends BaseController
     private $columns = [
         'name' => 'Nama',
     ];
+    private $detailColumns = [
+        'name' => [
+            'title' => 'Nama',
+            'type' => self::TYPE_TEXT,
+            'show' => false,
+            'trim' => true
+        ],
+        'permission' => [
+            'title' => 'Permission',
+            'type' => self::TYPE_MANY_TO_MANY,
+            'show' => false,
+            'trim' => true
+        ],
+    ];
+    private $roleService;
+    private $menuService;
 
-    public function __construct(Role $model)
+    public function __construct(Role $model, RoleService $roleService, MenuService $menuService)
     {
         $this->model = $model;
+        $this->roleService = $roleService;
+        $this->menuService = $menuService;
     }
 
     /**
@@ -55,12 +74,14 @@ class RoleController extends BaseController
         $this->checkPermission('create '.$this->permission);
 
         $permissions = Permission::orderBy('name', 'asc')->get();
+        $menuHeader = $this->menuService->getAll();
 
         return view($this->baseView.'create', [
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
             'permissions' => $permissions,
+            'menu_headers' => $menuHeader->getData(),
         ]);
     }
 
@@ -74,11 +95,12 @@ class RoleController extends BaseController
     {
         $this->checkPermission('create '.$this->permission);
 
+        $data = $request->all();
+        $permissionIds = $data['permission_ids'];
 
-        $result = $this->model->create($request->all());
+        unset($data['permission_ids']);
 
-        $data = $this->model->findOrFail($id);
-        $data->syncPermissions($permissionIds);
+        $result = $this->model->create($data)->syncPermissions($permissionIds);
 
         if ($result) {
             Alert::success('Buat Data Berhasil', 'Berhasil membuat data  baru');
@@ -99,13 +121,13 @@ class RoleController extends BaseController
     {
         $this->checkPermission('show '.$this->permission);
 
-        $data = $this->model->findOrFail($id);
+        $data = $this->roleService->find($id);
         return view($this->baseView.'show', [
-            'data' => $data,
+            'data' => $data->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
-            'columns' => $this->columns,
+            'columns' => $this->detailColumns,
         ]);
     }
 
@@ -120,9 +142,13 @@ class RoleController extends BaseController
         $this->checkPermission('update '.$this->permission);
 
         $permissions = Permission::orderBy('name', 'asc')->get();
-        $currentPermissions = Auth::user()->getAllPermissions();
 
-        $data = $this->model->findOrFail($id);
+        $role = $this->roleService->find($id);
+        $data = $role->getData();
+        $currentPermissions = $data->permission->toArray();
+        $menu = $this->menuService->getAll();
+        $currentMenu = $data->menu->all();
+
         return view($this->baseView.'edit', [
             'data' => $data,
             'title' => $this->title,
@@ -130,6 +156,8 @@ class RoleController extends BaseController
             'baseRoute' => $this->baseRoute,
             'permissions' => $permissions,
             'current_permissions' => $currentPermissions,
+            'menu_data' => $menu->getData(),
+            'current_menus' => $currentMenu,
         ]);
     }
 
@@ -145,11 +173,16 @@ class RoleController extends BaseController
         $this->checkPermission('update '.$this->permission);
 
         $permissionIds = $request->request->get('permission_ids');
+        $menuIds = $request->request->get('menu_ids');
 
         $data = $this->model->findOrFail($id);
         $data->syncPermissions($permissionIds);
 
+        $findRole = $this->roleService->find($id);
+
+        $role = $findRole->getData();
         $result = $data->update($request->all());
+        $role->menu()->sync($menuIds);
 
         if ($result) {
             Alert::success('Edit Data Berhasil', 'Berhasil mengubah data ');

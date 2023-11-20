@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ForgotPasswordController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\MenuHeaderController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -43,6 +45,8 @@ Route::name('admin.')->group(function() {
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
         Route::resource('users', UserController::class);
+        Route::resource('menu_headers', MenuHeaderController::class);
+        Route::resource('menus', MenuController::class);
     });
 
 });
