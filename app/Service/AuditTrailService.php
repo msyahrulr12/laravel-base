@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Models\AuditTrail;
 use App\Repositories\AuditTrailRepository;
 
 class AuditTrailService
@@ -21,9 +22,9 @@ class AuditTrailService
      *
      * @return bool
      */
-    public function saveActivity(string $activity, string $createdBy)
+    public static function saveActivity(string $activity, string $createdBy)
     {
-        $this->auditTrailRepository->create([
+        AuditTrail::create([
             'action' => $activity,
             'created_by' => $createdBy
         ]);

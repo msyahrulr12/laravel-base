@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
+use App\Service\RoleService;
 use App\Service\UploadHelper;
+use App\Service\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -138,19 +139,19 @@ class UserController extends BaseController
         ],
         'is_logged_in' => [
             'title' => 'Sedang Login',
-            'type' => self::TYPE_TEXT,
+            'type' => self::TYPE_BOOLEAN,
             'show' => false,
             'trim' => true
         ],
         'status' => [
             'title' => 'Status',
-            'type' => self::TYPE_TEXT,
+            'type' => self::TYPE_BOOLEAN,
             'show' => false,
             'trim' => true
         ],
         'is_blocked' => [
             'title' => 'Blokir',
-            'type' => self::TYPE_TEXT,
+            'type' => self::TYPE_BOOLEAN,
             'show' => false,
             'trim' => true
         ],
@@ -197,10 +198,18 @@ class UserController extends BaseController
             'trim' => true
         ],
     ];
+    private $roleService;
+    private $userService;
 
-    public function __construct(User $model)
+    public function __construct(
+        User $model,
+        RoleService $roleService,
+        UserService $userService
+    )
     {
         $this->model = $model;
+        $this->roleService = $roleService;
+        $this->userService = $userService;
     }
 
     /**
@@ -208,13 +217,19 @@ class UserController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->checkPermission('list '.$this->permission);
 
-        $datas = $this->model->orderBy('id', 'desc')->get();
-        return view($this->baseView.'index', [
-            'datas' => $datas,
+        $perPage = $request->get('per_page') ?? 10;
+        $result = $this->userService->getAll($perPage);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) list %s at %s', $this->getUser()->name, $this->getUser()->email, $this->title, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'index', [
+            'datas' => $result->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
@@ -231,7 +246,13 @@ class UserController extends BaseController
     {
         $this->checkPermission('create '.$this->permission);
 
-        return view($this->baseView.'create', [
+        $role = $this->roleService->getAll();
+
+        // write audit trail
+        $activity = sprintf('%s (%s) opening form create %s at %s', $this->getUser()->name, $this->getUser()->email, $this->title, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'create', [
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
@@ -239,6 +260,7 @@ class UserController extends BaseController
                 'serial_number' => User::getCurrentSerialNumber(),
                 'code' => User::generateCode(),
             ],
+            'roles' => $role->getData()
         ]);
     }
 
@@ -255,6 +277,10 @@ class UserController extends BaseController
         $uploadHelper = new UploadHelper($request->file('profile_image'));
         $uploadSuccess = $uploadHelper->upload();
         if (!$uploadSuccess) {
+            // write audit trail
+            $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, 'failed upload profile image', date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
             return redirect()->route($this->baseRoute.'index');
         }
@@ -267,6 +293,10 @@ class UserController extends BaseController
         $uploadHelper = new UploadHelper($request->file('ktp_image'));
         $uploadSuccess = $uploadHelper->upload();
         if (!$uploadSuccess) {
+            // write audit trail
+            $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, 'failed upload ktp image', date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
             return redirect()->route($this->baseRoute.'index');
         }
@@ -276,43 +306,28 @@ class UserController extends BaseController
 
         $request->request->set('ktp_image', $fullname);
 
-        $uploadHelper = new UploadHelper($request->file('member_name_image'));
-        $uploadSuccess = $uploadHelper->upload();
-        if (!$uploadSuccess) {
-            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
-            return redirect()->route($this->baseRoute.'index');
-        }
-        $fileType = $uploadHelper->getExtension();
-        $filename = $uploadHelper->getFilename();
-        $fullname = $filename . '.' . $fileType;
-
-        $request->request->set('member_name_image', $fullname);
-
-        $uploadHelper = new UploadHelper($request->file('member_code_image'));
-        $uploadSuccess = $uploadHelper->upload();
-        if (!$uploadSuccess) {
-            Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
-            return redirect()->route($this->baseRoute.'index');
-        }
-        $fileType = $uploadHelper->getExtension();
-        $filename = $uploadHelper->getFilename();
-        $fullname = $filename . '.' . $fileType;
-
-        $request->request->set('member_code_image', $fullname);
-
-        // $qrCodeService = new QrCodeService($this->getUser());
-        // $qrCode = file_get_contents($qrCodeService->generate());
-        // if (!$qrCode) abort(400);
-        // $request->request->set('qrcode_image', $qrCodeService->getFilename());
-
         $request->request->set('password', bcrypt($request->request->get('password')));
 
         $result = $this->model->create($request->request->all());
 
         if ($result) {
+            // write audit trail
+            $activity = sprintf('%s (%s) creating %s with data success \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, json_encode($result->getData()), date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Buat Data Berhasil', 'Berhasil membuat data  baru');
             return redirect()->route($this->baseRoute.'index');
         }
+
+        $errors = $result->getErrors();
+        $messageErrors = array_map(function($r) {
+            return $r->getMessage();
+        }, $errors);
+        $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Terjadi Kesalahan!', 'Gagal membuat data baru');
         return back();
@@ -329,7 +344,12 @@ class UserController extends BaseController
         $this->checkPermission('show '.$this->permission);
 
         $data = $this->model->findOrFail($id);
-        return view($this->baseView.'show', [
+
+        // write audit trail
+        $activity = sprintf('%s (%s) showing %s with ID %d at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'show', [
             'data' => $data,
             'title' => $this->title,
             'baseView' => $this->baseView,
@@ -349,11 +369,19 @@ class UserController extends BaseController
         $this->checkPermission('update '.$this->permission);
 
         $data = $this->model->findOrFail($id);
-        return view($this->baseView.'edit', [
+        // dd($data['roles'][0]);
+        $role = $this->roleService->getAll();
+
+        // write audit trai
+        $activity = sprintf('%s (%s) opening form edit %s with ID %d at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'edit', [
             'data' => $data,
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'roles' => $role->getData(),
         ]);
     }
 
@@ -374,6 +402,10 @@ class UserController extends BaseController
             $uploadHelper = new UploadHelper($request->file('profile_image'));
             $uploadSuccess = $uploadHelper->upload($data->file);
             if (!$uploadSuccess) {
+                // write audit trail
+                $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, 'failed reupload profile image', date('Y-m-d H:i:s'));
+                $this->writeAuditTrail($activity, $this->getUser()->name);
+
                 Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
                 return redirect()->route($this->baseRoute.'index');
             }
@@ -388,6 +420,10 @@ class UserController extends BaseController
             $uploadHelper = new UploadHelper($request->file('ktp_image'));
             $uploadSuccess = $uploadHelper->upload($data->file);
             if (!$uploadSuccess) {
+                // write audit trail
+                $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, 'failed reupload ktp image', date('Y-m-d H:i:s'));
+                $this->writeAuditTrail($activity, $this->getUser()->name);
+
                 Alert::error('Terjadi Kesalahan!', 'Gagal mengupload file');
                 return redirect()->route($this->baseRoute.'index');
             }
@@ -404,9 +440,23 @@ class UserController extends BaseController
         $result = $data->update($request->request->all());
 
         if ($result) {
+            // write audit trail
+            $activity = sprintf('%s (%s) updating %s with ID %d success at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Edit Data Berhasil', 'Berhasil mengubah data');
             return redirect()->route($this->baseRoute.'index');
         }
+
+        $errors = $result->getErrors();
+        $messageErrors = array_map(function($r) {
+            return $r->getMessage();
+        }, $errors);
+        $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) updating %s with ID %d failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Terjadi Kesalahan!', 'Gagal mengubah data');
         return back();
@@ -425,10 +475,23 @@ class UserController extends BaseController
         $data = $this->model->findOrFail($id);
         $result = $data->delete();
         if ($result) {
+            // write audit trail
+            $activity = sprintf('%s (%s) deleting %s with ID %d success at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Hapus Data Berhasil', 'Berhasil menghapus data');
-            // return $this->index();
             return redirect()->route($this->baseRoute.'index');
         }
+
+        $errors = $result->getErrors();
+        $messageErrors = array_map(function($r) {
+            return $r->getMessage();
+        }, $errors);
+        $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) deleting %s with ID %d failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Terjadi Kesalahan!', 'Gagal menghapus data');
         return back();

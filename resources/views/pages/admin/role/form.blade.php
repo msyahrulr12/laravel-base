@@ -2,6 +2,11 @@
 <div class="form-group">
     <label for="name" class="form-label">Nama Role</label>
     <input type="text" name="name" id="name" class="form-control" value="{{ isset($data['name']) ? $data['name'] : '' }}">
+    @if ($errors->any() && isset($errors->messages()['name']))
+        @foreach ($errors->messages()['name'] as $errorMessage)
+            <small class="text-danger underline">{{ $errorMessage }}</small>
+        @endforeach
+    @endif
 </div>
 
 <br>

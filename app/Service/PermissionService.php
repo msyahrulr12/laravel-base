@@ -22,6 +22,16 @@ class PermissionService
     }
 
     /**
+     * @return object|array
+     */
+    public function getAll($limit = null)
+    {
+        $result = new GeneralResult();
+        $result->setData($this->permissionRepository->getAll($limit));
+        return $result;
+    }
+
+    /**
      * @param \App\Http\Requests\PermissionRequest $request
      *
      * @return \App\Results\GeneralResult

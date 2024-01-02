@@ -22,12 +22,14 @@ class MenuService
     }
 
     /**
+     * @param null|int $perPage
+     *
      * @return object
      */
-    public function getAll()
+    public function getAll($perPage = null)
     {
         $result = new GeneralResult();
-        $result->setData($this->menuRepository->getAll());
+        $result->setData($this->menuRepository->getAll($perPage));
         return $result;
     }
 

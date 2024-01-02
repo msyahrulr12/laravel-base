@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Role;
-use Spatie\Permission\Models\Permission as SpatiePermission;
+use App\Models\User;
 use Spatie\Permission\Models\Role as ModelsRole;
 
-class RoleRepository
+class UserRepository
 {
     /**
      * @var \App\Models\Role
@@ -28,12 +28,14 @@ class RoleRepository
     }
 
     /**
+     * @param null|int $perPage
+     *
      * @return object|array
      */
-    public function getAll($limit = null)
+    public function getAll($perPage = null)
     {
-        if ($limit) {
-            return $this->model->paginate($limit);
+        if ($perPage) {
+            return $this->model->paginate($perPage);
         }
 
         return $this->model->orderBy('id', 'desc')->get();
@@ -111,10 +113,11 @@ class RoleRepository
     }
 
     /**
-     * @param
+     * @param \App\Models\User $user
+     * @param string $roleName
      */
-    public function syncPermission()
+    public function assignRole(User $user, string $roleName)
     {
-
+        return $user->assignRole($roleName);
     }
 }

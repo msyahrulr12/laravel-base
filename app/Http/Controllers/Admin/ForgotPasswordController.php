@@ -23,6 +23,9 @@ class ForgotPasswordController extends Controller
     {
         $user = User::where('email', $request->get('email'))->first();
         if (!$user) {
+            $activity = sprintf('%s (%s) trying verify email forgot password with email %s is not found at %s', $this->getUser()->name, $this->getUser()->email, $request->get('email'), date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::error('Email tidak ditemukan!', sprintf('Email %s tidak terdaftar', $request->get('email')));
             return back();
         }

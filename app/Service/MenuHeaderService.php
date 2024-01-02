@@ -20,12 +20,13 @@ class MenuHeaderService
     }
 
     /**
+     * @param null|int $perPage
      * @return GeneralResult
      */
-    public function getAll(): GeneralResult
+    public function getAll($perPage = null): GeneralResult
     {
         $result = new GeneralResult();
-        $result->setData($this->menuHeaderRepository->getAll());
+        $result->setData($this->menuHeaderRepository->getAll($perPage));
         return $result;
     }
 

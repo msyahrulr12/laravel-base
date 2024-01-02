@@ -23,6 +23,8 @@
     <script src="https://cdn.tiny.cloud/1/vbv648tcvjj964pg4cw6z4uewq92d4j2zjkxaa0bsvvz2yb8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
 </head>
 
 <body>

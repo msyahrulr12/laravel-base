@@ -1,18 +1,16 @@
 @extends('layouts.admin.main')
 @section('content')
 
-<div class="card">
-    <div class="card-header">
-        <div class="d-flex justify-content-between">
-            <h3>Edit Data {{ $title }}</h3>
-            <div class="align-items-center">
-                <a href="{{ route($baseRoute.'index') }}" class="btn btn-secondary">
-                    <i class="align-middle" data-feather="arrow-left"></i>
-                    <span>Kembali</span>
-                </a>
-            </div>
-        </div>
+<div class="d-flex justify-content-between">
+    <h3>Edit Data {{ $title }}</h3>
+    <div class="align-items-center">
+        <a href="{{ route($baseRoute.'index') }}" class="btn btn-secondary">
+            <i class="align-middle" data-feather="arrow-left"></i>
+            <span>Kembali</span>
+        </a>
     </div>
+</div>
+<div class="card">
     <div class="card-body">
         <form action="{{ route($baseRoute.'update', $data->id) }}" method="POST" enctype="multipart/form-data">
             @method('PUT')

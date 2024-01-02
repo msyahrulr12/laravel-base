@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\MenuHeaderRequest;
 use App\Http\Requests\MenuRequest;
 use App\Service\MenuHeaderService;
 use App\Service\MenuService;
+use App\Service\RouteService;
+use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
-use Spatie\Permission\Models\Permission;
 
 class MenuController extends BaseController
 {
@@ -62,7 +62,10 @@ class MenuController extends BaseController
     private $menuService;
     private $menuHeaderService;
 
-    public function __construct(MenuService $menuService, MenuHeaderService $menuHeaderService)
+    public function __construct(
+        MenuService $menuService,
+        MenuHeaderService $menuHeaderService
+    )
     {
         $this->menuService = $menuService;
         $this->menuHeaderService = $menuHeaderService;
@@ -73,13 +76,18 @@ class MenuController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->checkPermission('list '.$this->permission);
 
-        $result = $this->menuService->getAll();
+        $perPage = $request->get('per_page') ?? 10;
+        $result = $this->menuService->getAll($perPage);
 
-        return view($this->baseView.'index', [
+        // write audit trail
+        $activity = sprintf('%s (%s) list %s at %s', $this->getUser()->name, $this->getUser()->email, $this->title, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'index', [
             'datas' => $result->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
@@ -97,17 +105,21 @@ class MenuController extends BaseController
     {
         $this->checkPermission('create '.$this->permission);
 
-        $permissions = Permission::orderBy('name', 'asc')->get();
         $parentMenu = $this->menuService->getParentMenu();
         $menuHeaders = $this->menuHeaderService->getAll();
+        $routes = RouteService::getAllRoute();
 
-        return view($this->baseView.'create', [
+        // write audit trail
+        $activity = sprintf('%s (%s) opening form create %s at %s', $this->getUser()->name, $this->getUser()->email, $this->title, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'create', [
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
-            'permissions' => $permissions,
             'menus' => $parentMenu->getData(),
             'menu_headers' => $menuHeaders->getData(),
+            'routes' => $routes,
         ]);
     }
 
@@ -122,8 +134,11 @@ class MenuController extends BaseController
         $this->checkPermission('create '.$this->permission);
 
         $result = $this->menuService->create($request);
-
         if (count($result->getErrors()) < 1) {
+            // write audit trail
+            $activity = sprintf('%s (%s) creating %s with data success \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, json_encode($result->getData()), date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Buat Data Berhasil', 'Berhasil membuat data  baru');
             return redirect()->route($this->baseRoute.'index');
         }
@@ -133,6 +148,10 @@ class MenuController extends BaseController
             return $r->getMessage();
         }, $errors);
         $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) creating %s with data failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Gagal membuat data baru!', $message);
         return back();
@@ -150,7 +169,11 @@ class MenuController extends BaseController
 
         $result = $this->menuService->find($id);
 
-        return view($this->baseView.'show', [
+        // write audit trail
+        $activity = sprintf('%s (%s) showing %s with ID %d at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'show', [
             'data' => $result->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
@@ -170,29 +193,42 @@ class MenuController extends BaseController
         $this->checkPermission('update '.$this->permission);
 
         $result = $this->menuService->find($id);
+        $parentMenu = $this->menuService->getParentMenu();
+        $menuHeaders = $this->menuHeaderService->getAll();
+        $routes = RouteService::getAllRoute();
 
-        return view($this->baseView.'edit', [
+        // write audit trail
+        $activity = sprintf('%s (%s) opening form edit %s with ID %d at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
+
+        return view($this->commonView.'edit', [
             'data' => $result->getData(),
             'title' => $this->title,
             'baseView' => $this->baseView,
             'baseRoute' => $this->baseRoute,
+            'menus' => $parentMenu->getData(),
+            'menu_headers' => $menuHeaders->getData(),
+            'routes' => $routes,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  MenuHeaderRequest  $request
+     * @param  MenuRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(MenuHeaderRequest $request, $id)
+    public function update(MenuRequest $request, $id)
     {
         $this->checkPermission('update '.$this->permission);
 
         $result = $this->menuService->update($request, $id);
-
         if (count($result->getErrors()) < 1) {
+            // write audit trail
+            $activity = sprintf('%s (%s) updating %s with ID %d success at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Edit Data Berhasil', 'Berhasil mengubah data ');
             return redirect()->route($this->baseRoute.'index');
         }
@@ -202,6 +238,10 @@ class MenuController extends BaseController
             return $r->getMessage();
         }, $errors);
         $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) updating %s with ID %d failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Gagal update data!', $message);
         return back();
@@ -219,8 +259,11 @@ class MenuController extends BaseController
 
         $result = $this->menuService->delete($id);
         if (count($result->getErrors()) < 1) {
+            // write audit trail
+            $activity = sprintf('%s (%s) deleting %s with ID %d success at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, date('Y-m-d H:i:s'));
+            $this->writeAuditTrail($activity, $this->getUser()->name);
+
             Alert::success('Hapus Data Berhasil', 'Berhasil menghapus data');
-            // return $this->index();
             return redirect()->route($this->baseRoute.'index');
         }
 
@@ -229,6 +272,10 @@ class MenuController extends BaseController
             return $r->getMessage();
         }, $errors);
         $message = implode(', ', $messageErrors);
+
+        // write audit trail
+        $activity = sprintf('%s (%s) deleting %s with ID %d failed because \'%s\' at %s', $this->getUser()->name, $this->getUser()->email, $this->title, $id, $message, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         Alert::error('Gagal update data!', $message);
         return back();

@@ -26,7 +26,11 @@ class DashboardController extends BaseController
     {
         $this->checkPermission('home '.$this->permission);
 
-        $menus = $this->menuService->getMyAllMenu(Auth::user());
+        $menus = $this->menuService->getMyAllMenu($this->getUser());
+
+        // write audit trail
+        $activity = sprintf('%s (%s) accessing dashboard at %s', $this->getUser()->name, $this->getUser()->email, date('Y-m-d H:i:s'));
+        $this->writeAuditTrail($activity, $this->getUser()->name);
 
         return view('pages.admin.index', [
             'title' => $this->title,

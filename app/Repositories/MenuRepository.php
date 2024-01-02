@@ -24,10 +24,16 @@ class MenuRepository
     }
 
     /**
+     * @param null|int $perPage
+     *
      * @return object
      */
-    public function getAll()
+    public function getAll($perPage = null)
     {
+        if ($perPage) {
+            return $this->model->paginate($perPage);
+        }
+
         return $this->model->all();
     }
 

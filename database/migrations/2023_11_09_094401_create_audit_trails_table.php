@@ -15,7 +15,7 @@ class CreateAuditTrailsTable extends Migration
     {
         Schema::create('audit_trails', function (Blueprint $table) {
             $table->id();
-            $table->string('action');
+            $table->text('action');
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->string('deleted_by')->nullable();

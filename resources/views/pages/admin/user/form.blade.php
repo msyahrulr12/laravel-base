@@ -57,6 +57,23 @@
     </div>
 </div>
 <div class="row mt-2">
+    <div class="form-group">
+        <label for="name" class="form-label">Role</label>
+        <select name="role_name" id="role_name" class="form-control">
+            <option value="" {{ isset($data['roles']) && $data['role_name'] == '' ? 'selected' : '' }}>Pilih Role</option>
+            @foreach ($roles as $role)
+                <option value="{{ $role['id'] }}" {{ isset($data['role_name']) && $data['role_name'] == $role['id'] ? 'selected' : '' }}>{{ $role['name'] }}</option>
+            @endforeach
+        </select>
+
+        @if ($errors->any() && isset($errors->messages()['phone_number']))
+            @foreach ($errors->messages()['phone_number'] as $errorMessage)
+                <small class="text-danger underline">{{ $errorMessage }}</small>
+            @endforeach
+        @endif
+    </div>
+</div>
+<div class="row mt-2">
     <div class="form-group col">
         <label for="phone_number" class="form-label">Nomor Telepon</label>
         <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ isset($data['phone_number']) ? $data['phone_number'] : '' }}">

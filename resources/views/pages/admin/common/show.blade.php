@@ -16,9 +16,6 @@
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <h3>Detail Data {{ $title }}</h3>
-    </div>
     <div class="card-body">
         <table class="table">
             <tbody>
@@ -39,12 +36,35 @@
                             @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_BELONGS_TO)
                                 <table class="table">
                                     @foreach ($data->$key->toArray() as $k => $v)
+                                    @dd($k, $v)
                                     <tr>
                                         <th>{!! $k !!}</th>
                                         <td>{!! $v !!}</td>
                                     </tr>
                                     @endforeach
                                 </table>
+                            @elseif ($column['type'] == \App\Http\Controllers\Admin\BaseController::TYPE_MANY_TO_MANY)
+                            <div class="row">
+                                @foreach ($data->$key->toArray() as $k => $v)
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    @foreach ($v as $k1 => $v1)
+                                                        @php
+                                                            if (is_array($v1)) continue
+                                                        @endphp
+                                                        <tr>
+                                                            <th>{!! $k1 !!}</th>
+                                                            <td>{!! $v1 !!}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                             @endif
                         </td>
                     </tr>

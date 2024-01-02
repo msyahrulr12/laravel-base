@@ -2,30 +2,30 @@
 
 namespace App\Service;
 
-use App\Http\Requests\PermissionRequest;
 use App\Http\Requests\RoleRequest;
-use App\Models\Role;
-use App\Repositories\roleRepository;
+use App\Repositories\UserRepository;
 use App\Results\ErrorCollection;
 use App\Results\GeneralResult;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role as ModelsRole;
 
-class RoleService
+class UserService
 {
-    private $roleRepository;
+    private $userRepository;
 
     public function __construct(
-        RoleRepository $roleRepository
+        UserRepository $userRepository
     )
     {
-        $this->roleRepository = $roleRepository;
+        $this->userRepository = $userRepository;
     }
 
-    public function getAll($limit = null)
+    /**
+     * @param null|int $perPage
+     */
+    public function getAll($perPage = null)
     {
         $result = new GeneralResult();
-        $result->setData($this->roleRepository->getAll($limit));
+        $result->setData($this->userRepository->getAll($perPage));
         return $result;
     }
 
@@ -41,13 +41,12 @@ class RoleService
         DB::beginTransaction();
         try {
             // create data
-            $data = $this->roleRepository->create([
-                'name' => $request->get('name')
-            ]);
+            $user = $this->userRepository->create($request->all());
+            $user->assignRole($request->get('role_name'));
 
             DB::commit();
 
-            $result->setData($data);
+            $result->setData($user);
 
             return $result;
         } catch (\Throwable $th) {
@@ -71,7 +70,7 @@ class RoleService
         DB::beginTransaction();
         try {
             // create data
-            $data = $this->roleRepository->createBySpatie([
+            $data = $this->userRepository->createBySpatie([
                 'name' => $request->get('name')
             ]);
 
@@ -99,7 +98,7 @@ class RoleService
         $result = new GeneralResult();
 
         try {
-            $data = $this->roleRepository->find($id);
+            $data = $this->userRepository->find($id);
             $result->setData($data);
 
             return $result;
@@ -122,12 +121,12 @@ class RoleService
 
         DB::beginTransaction();
         try {
-            $existingData = $this->roleRepository->findByName($request->get('name'));
+            $existingData = $this->userRepository->findByName($request->get('name'));
             if ($existingData && $existingData->id !== $id) {
                 $result->addError(new ErrorCollection(400, sprintf('Permission with name %s already exists', $request->get('name'))));
             }
 
-            $data = $this->roleRepository->update([
+            $data = $this->userRepository->update([
                 'name' => $request->get('name'),
             ], $id);
 
@@ -150,7 +149,7 @@ class RoleService
         $result = new GeneralResult();
 
         try {
-            $data = $this->roleRepository->findBySpatieModel($id);
+            $data = $this->userRepository->findBySpatieModel($id);
 
             $result->setData($data);
 
@@ -174,7 +173,7 @@ class RoleService
         $result = new GeneralResult();
 
         try {
-            $data = $this->roleRepository->delete($id);
+            $data = $this->userRepository->delete($id);
 
             $result->setData($data);
 

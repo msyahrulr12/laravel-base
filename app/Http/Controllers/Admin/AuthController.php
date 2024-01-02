@@ -10,9 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
-use function Ramsey\Uuid\v1;
-
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     private $menuService;
     private $auditTrailService;
@@ -41,10 +39,6 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // get menu for current user and store it to session
-            // $myMenu = $this->menuService->getMyMenu(Auth::user());
-            // session()->put(sprintf('menus_%d', Auth::user()->id), $myMenu);
-
             // set user to status logged in
             $user = Auth::user();
             $user->is_logged_in = true;
@@ -56,14 +50,14 @@ class AuthController extends Controller
 
             // save activity to audit trails
             $activity = sprintf('%s (%s) logged in to application at %s', $user->name, $user->email, date('Y-m-d H:i:s'));
-            $this->auditTrailService->saveActivity($activity, $user->name);
+            $this->writeAuditTrail($activity, $user->name);
 
             return redirect()->route('admin.dashboard');
         }
 
         // save activity to audit trails
         $activity = sprintf('%s failed logged in to application at %s', $request->get('email'), date('Y-m-d H:i:s'));
-        $this->auditTrailService->saveActivity($activity, $request->get('email'));
+        $this->writeAuditTrail($activity, $request->get('email'));
 
         Alert::error('Login Gagal', 'Email atau password salah!');
         return back();
@@ -78,7 +72,7 @@ class AuthController extends Controller
 
         // save activity to audit trails
         $activity = sprintf('%s (%s) logged out from application at %s', $user->name, $user->email, date('Y-m-d H:i:s'));
-        $this->auditTrailService->saveActivity($activity, $user->name);
+        $this->writeAuditTrail($activity, $user->name);
 
         Auth::logout();
         return redirect()->route('admin.login');

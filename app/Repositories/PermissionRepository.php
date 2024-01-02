@@ -28,11 +28,15 @@ class PermissionRepository
     }
 
     /**
-     * @return array
+     * @return object|array
      */
-    public function getAll(): array
+    public function getAll($limit = null)
     {
-        return $this->model->all()->toArray();
+        if ($limit) {
+            return $this->model->paginate($limit);
+        }
+
+        return $this->model->all();
     }
 
     /**

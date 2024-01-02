@@ -2,6 +2,12 @@
 <div class="form-group">
     <label for="code" class="form-label">Kode</label>
     <input type="text" name="code" id="code" class="form-control" value="{{ isset($data['code']) ? $data['code'] : '' }}">
+
+    @if ($errors->any() && isset($errors->messages()['code']))
+        @foreach ($errors->messages()['code'] as $errorMessage)
+            <small class="text-danger underline">{{ $errorMessage }}</small>
+        @endforeach
+    @endif
 </div>
 <div class="form-group">
     <label for="name" class="form-label">Menu Parent</label>
@@ -24,6 +30,12 @@
 <div class="form-group">
     <label for="name" class="form-label">Nama</label>
     <input type="text" name="name" id="name" class="form-control" value="{{ isset($data['name']) ? $data['name'] : '' }}">
+
+    @if ($errors->any() && isset($errors->messages()['name']))
+        @foreach ($errors->messages()['name'] as $errorMessage)
+            <small class="text-danger underline">{{ $errorMessage }}</small>
+        @endforeach
+    @endif
 </div>
 <div class="form-group">
     <label for="icon" class="form-label">Ikon</label>
@@ -32,7 +44,18 @@
 </div>
 <div class="form-group">
     <label for="link" class="form-label">Link</label>
-    <input type="text" name="link" id="link" class="form-control" value="{{ isset($data['link']) ? $data['link'] : '' }}">
+    <select name="link" id="link" class="form-control">
+        <option value="" {{ isset($data['link']) && $data['link'] == '' ? 'selected' : '' }}>Pilih Link</option>
+        @foreach ($routes as $route)
+            <option value="{{ $route }}" {{ isset($data['link']) && $data['link'] == $route ? 'selected' : '' }}>{{ $route }}</option>
+        @endforeach
+    </select>
+
+    @if ($errors->any() && isset($errors->messages()['link']))
+        @foreach ($errors->messages()['link'] as $errorMessage)
+            <small class="text-danger underline">{{ $errorMessage }}</small>
+        @endforeach
+    @endif
 </div>
 <div class="form-group">
     <label for="description" class="form-label">Deskripsi</label>
